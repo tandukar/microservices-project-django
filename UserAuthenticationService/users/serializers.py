@@ -17,4 +17,4 @@ class UserSerializer(serializers.ModelSerializer):
             instance.set_password(password)   #this hashes the password 
         instance.save()
         return instance
- 
+   
