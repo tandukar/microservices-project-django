@@ -7,11 +7,14 @@ from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from .models import *
-from rest_framework.viewsets import ModelViewSet
+from rest_framework.viewsets import ModelViewSet, ViewSet
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.exceptions import TokenError
 from rest_framework_simplejwt.authentication import JWTAuthentication
+# from ...UserAuthenticationService.users.producer import publish
+from .producer import publish
+
 class UserViewSet(ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
@@ -72,9 +75,42 @@ class UserLoginView(TokenObtainPairView):
         response.set_cookie('access_token',access_token, httponly=True)
         response.set_cookie('refresh_token',refresh_token, httponly=True)
         return response
-
     
 
+class FavoriteProductViewSet(ViewSet):
+    def create(self, request):
+        serializer = FavoriteProductSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        user_id = 1  # Temporarily using a fixed user ID for testing
+        product_id = serializer.validated_data['product_id']
+
+        # Publish the message to RabbitMQ
+        publish(user_id, product_id)
+
+        return Response({'message': 'Favorite product request sent'})
+
+
+# class FavProductsViewSet(ModelViewSet):
+#     queryset = FavProducts.objects.all()
+#     serializer_class = FavoriteProductsSerializer
+    # authentication_classes = [JWTAuthentication]
+    # permission_classes = [IsAuthenticated]
+
+    # def get_queryset(self):
+    #     return FavProducts.objects.filter(user=self.request.user)
+    # def create(self, request, *args, **kwargs):
+    #     response = super().create(request, *args, **kwargs)
+
+    #     user_id = '1'  #PAXI JWT DECODE GARERA YESMA ID HALNI
+    #     product_id = response.data.get('id')  
+
+    #     # Publish the message to RabbitMQ
+    #     publish(user_id, product_id)
+
+    #     return response
+
+    
 
 
         

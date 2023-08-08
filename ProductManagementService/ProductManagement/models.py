@@ -9,4 +9,8 @@ class Product(models.Model):
     productQuantity = models.IntegerField()
     productCategory = models.CharField(max_length=100, default='')
 
-    
+
+
+class FavProducts(models.Model):
+    product_id = models.IntegerField(blank=True, null=True)
+    user_id = models.IntegerField( blank=True, null=True)

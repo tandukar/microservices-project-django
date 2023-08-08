@@ -17,4 +17,10 @@ class UserSerializer(serializers.ModelSerializer):
             instance.set_password(password)   #this hashes the password 
         instance.save()
         return instance
+    
+    
+class FavoriteProductSerializer(serializers.Serializer):
+    user_id = serializers.IntegerField()
+    product_id = serializers.IntegerField()
+       
    
