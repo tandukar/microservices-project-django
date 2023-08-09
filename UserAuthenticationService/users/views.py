@@ -50,10 +50,9 @@ class UserViewSet(ModelViewSet):
             except User.DoesNotExist:
                 return Response({"detail": "User not found."}, status=404)
         else:
-            return Response({"detail": "Invalid or expired access token."}, status=401)
+            return Response({"detail": "Invalid or expired access token."}, status=  401)
 
-    # Add similar logic for other viewset actions like create, update, delete, etc.
-    # Ensure that the access token is validated before performing any sensitive operations.
+    #ensure user is authenticated for update and delete
 
 
 class UserLoginView(TokenObtainPairView):
@@ -82,7 +81,7 @@ class FavoriteProductViewSet(ViewSet):
         serializer = FavoriteProductSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        user_id = 1  # Temporarily using a fixed user ID for testing
+        user_id = serializer.validated_data['user_id']  # Temporarily using a fixed user ID for testing
         product_id = serializer.validated_data['product_id']
 
         # Publish the message to RabbitMQ

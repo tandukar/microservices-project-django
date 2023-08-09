@@ -2,7 +2,7 @@ from django.shortcuts import render
 from rest_framework.viewsets import ModelViewSet
 from .models import *
 from django_filters.rest_framework import DjangoFilterBackend
-from .serializers import *
+from .serializers import * 
 # from ...UserAuthenticationService.users.producer import publish
 
 class ProductViewSet(ModelViewSet):

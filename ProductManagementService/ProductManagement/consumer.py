@@ -4,6 +4,7 @@ import sys
 
 import os
 import django
+print(sys.path)
 
 # Append the path to the project directory to the system path
 project_path = "C:\\Users\\Asus\\OneDrive\\Documents\\GitHub\\microservices-project-django\\ProductManagementService"
@@ -26,7 +27,7 @@ print('this is the callback')
 
 def callback(ch, method, properties, body):
     print('this is the callback')
-    data = json.loads(body)
+    data = json.loads(body) 
     user_id = data['user_id']
     product_id = data['product_id']
     
@@ -37,3 +38,4 @@ channel.basic_consume(queue=queue_name, on_message_callback=callback, auto_ack=T
 
 print('Waiting for messages...')
 channel.start_consuming()
+  
