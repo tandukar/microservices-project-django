@@ -42,7 +42,6 @@ class UserViewSet(ModelViewSet):
     def retrieve(self, request, *args, **kwargs):
         user_id_from_access_token = self.get_user_id_from_token(request.COOKIES.get('access_token'))
         if user_id_from_access_token:
-            # Token is valid, get the user from the database
             try:
                 user = User.objects.get(pk=user_id_from_access_token)
                 serializer = self.get_serializer(user)
@@ -51,9 +50,34 @@ class UserViewSet(ModelViewSet):
                 return Response({"detail": "User not found."}, status=404)
         else:
             return Response({"detail": "Invalid or expired access token."}, status=  401)
+        
 
-    #ensure user is authenticated for update and delete
+    def delete(self, request, *args, **kwargs):
+        user_id_from_access_token = self.get_user_id_from_token(request.COOKIES.get('access_token'))
+        if user_id_from_access_token:
+            # Token is valid, get the user from the database
+            try:
+                user = User.objects.get(pk=user_id_from_access_token)
+                user.delete()
+                return Response({"detail": "User deleted."}, status=204)
+            except User.DoesNotExist:
+                return Response({"detail": "User not found."}, status=404)
+        else:
+            return Response({"detail": "Invalid or expired access token."}, status=  401)
 
+    def put(self, request, *args, **kwargs):
+        user_id_from_access_token = self.get_user_id_from_token(request.COOKIES.get('access_token'))
+        if user_id_from_access_token:
+            try:
+                user = User.objects.get(pk=user_id_from_access_token)
+                serializer = UserSerializer(user, data=request.data)
+                serializer.is_valid(raise_exception=True)
+                serializer.save()
+                return Response(serializer.data)
+            except User.DoesNotExist:
+                return Response({"detail": "User not found."}, status=404)
+        else:
+            return Response({"detail": "Invalid or expired access token."}, status=  401)
 
 class UserLoginView(TokenObtainPairView):
     def post(self,request, *args, **kwargs):
@@ -88,6 +112,7 @@ class FavoriteProductViewSet(ViewSet):
         publish(user_id, product_id)
 
         return Response({'message': 'Favorite product request sent'})
+
 
 
 # class FavProductsViewSet(ModelViewSet):
